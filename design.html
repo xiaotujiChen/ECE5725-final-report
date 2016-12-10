@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="shortcut icon" href="img/cornell.jpg" />
+    <title>Design</title>
+    <!-- Bootstrap Core CSS -->
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="css/clean-blog.min.css" rel="stylesheet">
+    <!-- Custom Fonts -->
+    <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href='http://fonts.googleapis.com/css?family=Lora:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header page-scroll">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="index.html">
+                    ECE5725 | Smart Alarm Clock
+                </a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="index.html">Home</a>
+                    </li>
+                    <li>
+                        <a href="design.html">Design</a>
+                    </li>
+                    <li>
+                        <a href="result.html">Result</a>
+                    </li>
+                    <li>
+                        <a href="appendix.html">Appendix</a>
+                    </li>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
+        </div>
+        <!-- /.container -->
+    </nav>
+    <!-- Page Header -->
+    <!-- Set your background image for this header on the line below. -->
+    <header class="intro-header" style="background:#424242; height: 70px;">
+    </header>
+    <!-- Post Content -->
+    <article>
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                    <h2 class="section-heading">
+                        Basic Function Modules
+                    </h2>
+                    <br>
+                    <b style="font-size: 25px">Time:</b>
+                    <br> For time display, we retrieve current time from system clock, and use pygame to place time at the center of screen.
+                    <blockquote>
+                        <img style="margin-bottom: 10px;margin-top: 10px;" src="img/time.png">
+                        <br>
+                        <span style="padding-left:170px">figure 1: Time Display</span></blockquote>
+                    <b style="font-size: 25px">Weather</b>
+                    <br> Before working on actual weather report display, we first need to install a module that provides python wrapper around Yahoo Weather, Weather.com and NOAA APIs, Python-weather-api. We download pywapi from Google Code Archive:
+                    <br>
+                    <a style="padding-left: 70px;" target="_blank" href="https://code.google.com/archive/p/python-weather-api/">https://code.google.com/archive/p/python-weather-api/</a>
+                    <br> After extracting it into our Pi home directory, we build and install this API:
+                    <br>
+                    <blockquote style="padding: 10px; background: #ddd; margin-top: 10px;">
+                        <code style="font-family: 'Courier New'; color: black; background-color: #ddd;  font-style: normal; padding: 0;">
+                            $ sudo python setup.py build<br>
+                            $ sudo python setup.py install<br>
+                        </code>
+                    </blockquote>
+                    Then, we are able to import this useful API in our weather report Python script. Through Python weather API, we grab all local weather information from Weather.com via local zip code. Inside giant weather information tuple, we retrieve temperature, humidity, and next four days’ weather forecast. In an icon folder, we store some images of different weathers. By using Pygame library, we split display into three parts. On top left, we place current weather and humidity. On top left is a calendar with weeks and days of current month. On bottom are weather forecast of next four days. We also set a time interval of one minute to keep updating weather information from online source.
+                    <blockquote>
+                        <img style="margin-bottom: 10px;margin-top: 10px;" src="img/weather.png">
+                        <br>
+                        <span style="padding-left:170px">figure 2: Weather Report</span></blockquote>
+                    <b style="font-size: 25px">Music Player</b>
+                    <br> We use the Raspberry Pi as a music player. It will download music from the internet and play automatically. We select mpg123 as our music playing software. It’s a free open-source audio player that supports decoding and playing music online. We need to install mpg123 by:
+                    <br>
+                    <blockquote style="padding: 10px; background: #ddd; margin-top: 10px;">
+                        <code style="font-family: 'Courier New'; color: black; background-color: #ddd;  font-style: normal;padding: 0;">
+                            $ sudo apt-get install python-setuptools mpg123 -y<br>
+                        </code>
+                    </blockquote>
+                    Originally, we think about searching music by their name. However, due to copyright, we couldn’t find a good API to index the mp3 file with the music name. To solve this, we find some URL links that end with “.mp3” and store the name, URL pair into a database. We import sqlite3 module to provide a lightweight disk-based database. When we start music player, it connects to music database to fetch the URL used for mgp123 to decode and download music.
+                    <blockquote>
+                        <img style="margin-bottom: 10px;margin-top: 10px;" src="img/music1.png">
+                        <br>
+                        <span style="padding-left:140px">figure 3: Fetch Music Online</span></blockquote>
+                    We import control keys of mpg123 which enables terminal control. Pressing 'h' for listing keys and pressing “q” for shifting songs. The command is:
+                    <blockquote style="padding: 10px; background: #ddd; margin-top: 10px;">
+                        <code style="font-family: 'Courier New'; color: black; background-color: #ddd;  font-style: normal;padding: 0;">
+                            $ mpg123 -C url<br>
+                        </code>
+                    </blockquote>
+                    We set two music playing mode: playing music in order and playing randomly. When we choose playing all music in order, pressing “q” could change to next song. When playing random, pressing “q” might shift to any songs in list.
+                    <blockquote>
+                        <img style="margin-bottom: 10px;margin-top: 10px;" src="img/music2.png">
+                        <br>
+                        <span style="padding-left:130px">figure 4: Control Keys of mpg123S</span></blockquote>
+                    <b style="font-size: 25px">Google Calendar Alarm</b>
+                    <br> It’s an alarm clock that syncs with our Google Calendar. It could fetch our events information and set alarm automaticlly.
+                    <br> It needs the following libraries installed on your Raspberry Pi:
+                    <br>
+                    <blockquote>• httplib2</blockquote>
+                    First download httplib2 library and unzip it.
+                    <blockquote style="padding: 10px; background: #ddd; margin-top: 10px;">
+                        <code style="font-family: 'Courier New'; color: black; background-color: #ddd;  font-style: normal;padding: 0;">
+                            $ cd httplib2-0.9.2/<br>
+                            $ sudo python setup.py build<br>
+                            $ sudo python setup.py install<br>
+                        </code>
+                    </blockquote>
+                    <blockquote>• apiclient</blockquote>
+                    <blockquote style="padding: 10px; background: #ddd; margin-top: 10px;">
+                        <code style="font-family: 'Courier New'; color: black; background-color: #ddd;  font-style: normal;padding: 0;">
+                            $ sudo pip install --upgrade google-api-python-client <br>
+                        </code>
+                    </blockquote>
+                    <blockquote>• APScheduler</blockquote>
+                    For APScheduler, we need to install version 2.1.2, if you have already installed APScheduler, you need to uninstall it.
+                    <blockquote style="padding: 10px; background: #ddd; margin-top: 10px;">
+                        <code style="font-family: 'Courier New'; color: black; background-color: #ddd;  font-style: normal;padding: 0;">
+                            $ sudo pip uninstall apscheduler<br>
+                            $ sudo pip install apscheduler==2.1.2<br>                    
+                        </code>
+                    </blockquote>
+                    Since google calendar provide API for us to get upcoming ten events, we could use this API connecting with our google calendar. When first run our program, it will attempt to open a new window or tab in our default browser for the authorization. Then we could get the upcoming ten events.
+                    <blockquote>
+                        <img style="margin-bottom: 10px;margin-top: 10px;" src="img/calendar1.png">
+                        <br>
+                        <span style="padding-left:100px">figure 5: Get Upcoming Ten Events</span></blockquote>
+                    For setting alarm, we get the json file of each event and obtain the start time information. We convert current time and start time into the same format and compare. If there are same, we use mpg123 to play the alarm music stored in a certain path. To add alarm at specific time/date, just head to Google Calendar and create an Event.
+                    <br> Since we could set our event time correct to minute in google calendar, in our program we use scheduler to trigger our event synchronization program every 60 seconds.
+                    <blockquote>
+                        <img style="margin-bottom: 10px;margin-top: 10px;" src="img/calendar2.png">
+                        <br>
+                        <span style="padding-left:140px">figure 6: Trigger Alarm </span></blockquote>
+                    <h2 class="section-heading">
+                        Gesture Control
+                    </h2>
+                    <br>
+                    <b style="font-size: 23px">Install OpenCV 3 on Raspberry Pi 3</b>
+                    <br> We follow the instruction below to install OpenCV 3
+                    <a style="font-size: 17px" target="_blank" href="http://www.pyimagesearch.com/2015/10/26/how-to-install-opencv-3-on-raspbian-jessie/">http://www.pyimagesearch.com/2015/10/26/how-to-install-opencv-3-on-raspbian-jessie/</a>
+                    <br>
+                    <br>
+                    <b style="font-size: 23px">Accessing Pi camera with OpenCV and Python</b>
+                    <br>With Pi camera module installed, we need to enable it in configuration:
+                    <blockquote style="padding: 10px; background: #ddd; margin-top: 10px;">
+                        <code style="font-family: 'Courier New'; color: black; background-color: #ddd;  font-style: normal;padding: 0;">
+                            $ sudo raspi-config<br>                   
+                        </code>
+                    </blockquote>
+                    After that, we use pip to install picamera so that we could interface with Pi camera module using Python and OpenCV:
+                    <blockquote style="padding: 10px; background: #ddd; margin-top: 10px;">
+                        <code style="font-family: 'Courier New'; color: black; background-color: #ddd;  font-style: normal;padding: 0;">
+                            $ pip install "picamera[array]"<br>                   
+                        </code>
+                    </blockquote>
+                    Reason to install picamera[array], instead of just picamera, is to support NumPy arrays during image processing. Pi camera has a relative comprehensive library and is easy to access.
+                    <br>
+                    <br>
+                    <b style="font-size: 23px">Gesture Control</b>
+                    <br> Our gesture control function contains three different parts.First, we define a class named MotionDetector, which is a sub-function used to detect any motions within certain area. If motion of hand is detected, we then <b>compute absolute difference between background and image passing in to find threshold of delta image.</b> After finding out contours of threshold image, we can <b>retrieve a general image of our hand.</b>
+                    <br>
+                    <br>We also define another function called GestureDetector, which <b>takes threshold image of hand from detected motion and calculates central point as well as how many finger displayed</b>. With different gestures, we assign them to different functions.
+                    <br>
+                    <br> For third part, the main function, we initialize our pi camera, and <b>take first 32 frames to catch a static background image</b> as reference. It is extremely important that there should be absolute no movement happen during those frames since it will be used to compare with motion picture in the future.
+                    <blockquote>
+                        <img style="margin-bottom: 10px;margin-top: 10px;" src="img/warmup.png">
+                        <br>
+                        <span style="padding-left:120px">figure 7:  Initialize Pi Camera</span>
+                        <img style="margin-bottom: 10px;margin-top: 10px;" src="img/background.png">
+                        <br>
+                        <span style="padding-left:140px">figure 8:  Background Image</span>
+                    </blockquote>
+                    Then, we start motion detection function. When hand is detected, it triggers gesture recognition. When sufficient number of frames is reached, say 25 frames, we recognize number as how many fingers detected, and trigger different functions.
+                    <blockquote>
+                        <img style="margin-bottom: 10px;margin-top: 10px;" src="img/gesture1.png">
+                        <br>
+                        <span style="padding-left:140px">figure 9:  Gesture Recognition</span>
+                        <img style="margin-bottom: 10px;margin-top: 10px;" src="img/gesture2.png">
+                        <br>
+                        <span style="padding-left:120px">figure 10:  Trigger Different Functions</span>
+                    </blockquote>
+                    <h2 class="section-heading">
+                        Remote Control 
+                    </h2>
+                    <br>To make our alarm clock smarter, we decide to build an Android APP on our phone to control it. This app acts as a remote control, we could trigger different functions of alarm clock without touch it. It’s much more convenient if we are not close to it.
+                    <br>
+                    <b style="font-size: 23px">System Design</b>
+                    <br>We use Android Studio to design the APP and build the connection between Android and Raspberry Pi. The flow diagram of remote control system is below:
+                    <blockquote>
+                        <img style="margin-bottom: 10px;margin-top: 10px;" src="img/appsystem.jpg">
+                        <br>
+                        <span style="padding-left:140px">figure 11: Android App System Design </span></blockquote>
+                    <b style="font-size: 23px">UI Design</b>
+                    <br>We design our Android APP UI using Android Studio. Since the users will interact with this APP, we try to make our UI simple and clean. We screenshot the UI of the APP. There are six image buttons: Time, Weather, Alarm, Music, Calendar and Gesture. When click on different buttons, Android could connect with Raspberry Pi, trigger different functions to control it.
+                    <blockquote>
+                        <img style="margin-bottom: 10px;margin-top: 10px; margin-left: 50px" src="img/ui.jpg">
+                        <br>
+                        <span style="margin-left: 100px;">figure 12: UI Design </span></blockquote>
+                    <b style="font-size: 23px">Communication with Raspberry Pi:</b>
+                    <br>We use TCP/IP protocol to build communication between Android App and raspberry pi. Since the IP address could change if we connect to different WIFI, we want to know current IP address of our raspberry pi first. We setup a server in raspberry to broadcast its’ IP address to all the devices in this LAN at a certain port. The Android device in the same LAN will receive the broadcast and locate the IP address of the server. When Android device receives this message, it will show “get IP address of Raspberry Pi” on the screen.
+                    <blockquote>
+                        <div class="left" style="float: left; width: 50%">
+                            <img style="margin-bottom: 10px;margin-top: 10px; margin-left: 50px" src="img/getip.jpg">
+                            <br>
+                            <span style="margin-left: 37px;">figure 13: Get IP Address of Pi </span>
+                        </div>
+                        <div class="right" style="display: inline-block;width: 50%">
+                            <img style="margin-bottom: 10px;margin-top: 10px; margin-left: 50px" src="img/click.jpg">
+                            <br>
+                            <span style="margin-left: 30px;">figure 14: Click On Time Button </span>
+                        </div>
+                    </blockquote>
+                    Now we could start server on the raspberry pi. When we click the button through android devices, a session will be established to build communication between raspberry Pi and Android using TCP socket.
+                    <blockquote>
+                        <img style="margin-bottom: 10px;margin-top: 10px; " src="img/remotecontrol.jpg">
+                        <br>
+                        <span style="margin-left: 100px;">figure 15: Control Pi Using Android App </span></blockquote>
+                    <h2 class="section-heading">
+                        Integration 
+                    </h2>
+                    <br> Finally we integrate all these functions into a whole system. We run a bash script to enable google calendar running background, continuing to update event information and set alarm automaticlly. Also, server on Raspberry Pi is also enabled to connect with our app on phone. All functions including gesture control could be open by clicking on phone. Once gesture control is selected, other functions would be triggered via different hand gestures.
+                    <blockquote>
+                        <img style="margin-bottom: 10px;margin-top: 10px; " src="img/integrate.png">
+                        <br>
+                        <span style="margin-left: 210px;">figure 16: Smart Alarm Clock System </span></blockquote>
+                </div>
+            </div>
+        </div>
+    </article>
+    <!-- Footer -->
+    <footer>
+        <hr>
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <p class="copyright text-muted">
+                    <img class="img-responsive" src="img/cornell.jpg" alt="" height="50" width="50" align="middle">
+                    <a target="_blank" href="http://www.cornell.edu/">Cornell University</a>
+                    <br>
+                    <a target="_blank" href="https://www.ece.cornell.edu/">Department of Electrical and Computer Engineering</a>
+                    <br> Copyright &copy; <a target="_blank" href="https://www.linkedin.com/in/xiyu-chen-141363104">Xiyu Chen(xc334)</a>,
+                    <a target="_blank" href="https://www.linkedin.com/in/zihao-lu-a3b43267?trk=hp-identity-photo">Zihao Lu(zl477)</a></p>
+            </div>
+        </div>
+    </footer>
+    <!-- jQuery -->
+    <script src="js/jquery.js"></script>
+    <!-- Bootstrap Core JavaScript -->
+    <script src="js/bootstrap.min.js"></script>
+    <!-- Custom Theme JavaScript -->
+    <script src="js/clean-blog.min.js"></script>
+</body>
+
+</html>
